@@ -1,27 +1,43 @@
 from graphics import Window
+import math
+import random
+
+random.seed()
+GG_rand = int(random.random() * 255)
+BB_rand = int(random.random() * 255)
 
 class Fractal():
 
     def __init__(self, xa, xb, ya, yb, win):
-        self.pixel_map = self.mandelbrot(xa, xb, ya, yb, win._width, win._height)
+        self.pixel_map_str = self.mandel_pixel(xa, xb, ya, yb, win._width, win._height)
     
-    def mandel_pixel(self, c):
-        maxIt = 256
-        z =  c   
-        for i in range(maxIt):
-            a = z * z
-            z=a + c
-            if a.real  >= 4.:
+    def mandelbrot(self, c):
+        z = complex(0, 0)
+        for i in range(256):
+            z = z**2 + c
+            if abs(z)  > 4.:
                 return i
         return 256
 
-    def mandelbrot(self, xa,xb,ya,yb,x,y):
-        """ returns a mandelbrot in a string for Tk PhotoImage"""
-        #color string table in Photoimage format #RRGGBB 
-        clr=[ ' #%02x%02x%02x' % (int(255*((i/255)**.25)),0,0) for i in range(256)]
-        clr.append(' #000000')  #append the color of the centre as index 256
-        #calculate mandelbrot x,y coordinates for each screen pixel
-        xm=[xa + (xb - xa) * kx /x  for kx in range(x)]
-        ym=[ya + (yb - ya) * ky /y  for ky in range(y)]
-        #build the Photoimage string by calling mandel_pixel to index in the color table
-        return" ".join((("{"+" ".join(clr[self.mandel_pixel(complex(i,j))] for i in xm))+"}" for j in ym))
+    def mandel_pixel(self, xa,xb,ya,yb,x,y):
+        """ Returns a mandel-to-color in a string for Tk PhotoImage """
+
+        # Color string table in PhotoImage with format #RRGGBB
+        # Pick random colors pallete to display the fractal image
+        clr = [ 
+            "#%02x%02x%02x" % ( abs(int( math.cos((i)) * 255 )), 
+                                GG_rand,
+                                BB_rand,)
+            for i in range(256)
+        ]
+
+        # Append the color of the centre as index 256
+        clr.append(' #000000')  
+   
+        # Calculate mandelbrot x,y coordinates for each screen pixel
+
+        xm = [xa + (xb - xa) * kx /x  for kx in range(x)]
+        ym = [ya + (yb - ya) * ky /y  for ky in range(y)]
+
+        # Build the PhotoImage string by calling mandel_pixel to index in the color table
+        return " ".join((("{"+" ".join(clr[self.mandelbrot(complex(i,j))] for i in xm))+"}" for j in ym))

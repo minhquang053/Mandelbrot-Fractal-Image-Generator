@@ -4,7 +4,7 @@ from tkinter import Tk, Canvas, PhotoImage, NW
 class Window:
     def __init__(self, width, height):
         self.__root = Tk()
-        self.__root.title("Maze Solver")
+        self.__root.title("Fractal Image")
         self.__root.protocol("WM_DELETE_WINDOW", self.close)
         self._width = width
         self._height = height
